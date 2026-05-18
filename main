@@ -1,1 +1,69 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
 
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Student> students = new ArrayList<Student>();
+
+        System.out.println("=== Enter data for 5 students ===\n");
+
+        for (int i = 1; i <= 5; i++) {
+            System.out.println("--- Student " + i + " ---");
+
+            System.out.print("Enter ID: ");
+            int id = scanner.nextInt();
+            scanner.nextLine();
+
+            System.out.print("Enter Name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Enter GPA: ");
+            float gpa = scanner.nextFloat();
+
+            System.out.print("Enter Level: ");
+            int level = scanner.nextInt();
+
+            students.add(new Student(id, name, gpa, level));
+            System.out.println();
+        }
+
+        try {
+            FileOutputStream fos = new FileOutputStream("students.dat");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(students);
+            oos.close();
+            fos.close();
+            System.out.println("Students saved successfully!\n");
+        } catch (Exception e) {
+            System.out.println("Error while saving: " + e.getMessage());
+        }
+
+        try {
+            FileInputStream fis = new FileInputStream("students.dat");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            ArrayList<Student> loadedStudents = (ArrayList<Student>) ois.readObject();
+            ois.close();
+            fis.close();
+
+            System.out.println("=== Students loaded from file ===\n");
+            for (Student s : loadedStudents) {
+                System.out.println("ID    : " + s.getId());
+                System.out.println("Name  : " + s.getName());
+                System.out.println("GPA   : " + s.getGpa());
+                System.out.println("Level : " + s.getLevel());
+                System.out.println("---------------------------");
+            }
+        } catch (Exception e) {
+            System.out.println("Error while reading: " + e.getMessage());
+        }
+
+        scanner.close();
+    }
+}
